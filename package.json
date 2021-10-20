@@ -1,25 +1,52 @@
 {
   "name": "linkerr",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Simple site parser",
-  "main": "index.js",
+  "type": "module",
+  "bin": "./dist/bin.js",
+  "exports": "./dist/linkerr.js",
+  "types": "./dist/linkerr.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "prebuild": "rimraf dist"
   },
-  "author": "Alex Mubarakshin",
+  "author": {
+    "name": "Vitalij Ryndin",
+    "email": "sys@crashmax.ru",
+    "url": "https://crashmax.ru"
+  },
+  "homepage": "https://github.com/crashmax-dev/linkerr",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AlexMubarakshin/linkerr.git"
+    "url": "https://github.com/crashmax-dev/linkerr.git"
   },
-  "license": "ISC",
+  "license": "MIT",
+  "keywords": [
+    "cli-app",
+    "cli",
+    "npx",
+    "parse",
+    "url",
+    "link"
+  ],
   "devDependencies": {
-    "cheerio": "1.0.0-rc.2",
-    "ora": "3.4.0",
-    "request": "2.88.0",
-    "request-promise": "4.2.4"
+    "@types/node": "^16.11.1",
+    "@types/url-parse": "^1.4.4",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.4.4"
   },
   "dependencies": {
-    "chalk": "^2.4.2",
-    "commander": "2.20.0"
+    "chalk": "^4.1.2",
+    "commander": "^8.2.0",
+    "got": "^11.8.2",
+    "node-html-parser": "^5.0.0",
+    "ora": "^6.0.1",
+    "url-parse": "^1.5.3"
+  },
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   }
 }

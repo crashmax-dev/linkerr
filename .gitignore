@@ -1,4 +1,5 @@
-node_modules/
-parsed-data/
-parsed/
-output/
+/node_modules
+/output
+/dist
+*.log
+linkerr-*.tgz

@@ -11,6 +11,7 @@ import Linkerr, { getCurrentDate } from './linkerr.js'
   const spinner = ora()
   const program = new Command()
   const __dirname = dirname(fileURLToPath(import.meta.url))
+  const exit = (code: number) => process.exit(code)
 
   program
     .name('linkerr')
@@ -24,7 +25,7 @@ import Linkerr, { getCurrentDate } from './linkerr.js'
   if (!options.url) {
     console.log('Please, specify the URL for parsing\n')
     program.help()
-    return
+    exit(0)
   }
 
   const parsedUrl = parseURL(options.url)
@@ -45,8 +46,10 @@ import Linkerr, { getCurrentDate } from './linkerr.js'
       spinner.succeed(`Data saved at ${chalk.cyan(path.join(outputPath, fileName))}`)
     } catch (err) {
       spinner.fail(err.message)
+      exit(2)
     }
   } else {
     spinner.fail('URL is not valid!')
+    exit(1)
   }
 })()

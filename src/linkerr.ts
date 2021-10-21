@@ -1,7 +1,6 @@
 import fs from 'fs'
 import got from 'got'
-import path, { dirname } from 'path'
-import { fileURLToPath } from 'url'
+import path from 'path'
 
 import URLParse from 'url-parse'
 import { parse as parseBody } from 'node-html-parser'
@@ -68,9 +67,9 @@ export default class Linkerr {
     }, [])
   }
 
-  public async saveFile({ outputPath, fileName, data = this.data }: LinkerrSaveData) {
+  public async saveFile({ outputPath, fileName }: LinkerrSaveData) {
     return new Promise<void>((resolve, reject) => {
-      if (!data) {
+      if (!this.data) {
         reject('Data is not found!')
       }
 
@@ -83,7 +82,7 @@ export default class Linkerr {
         fs.mkdirSync(outputPath)
       }
 
-      fs.writeFile(savePath, JSON.stringify(data, null, 2), (err) => {
+      fs.writeFile(savePath, JSON.stringify(this.data, null, 2), (err) => {
         if (err) {
           reject(err)
         } else {

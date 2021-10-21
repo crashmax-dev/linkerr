@@ -10,7 +10,15 @@ export function parseURL(url: string) {
 
 export function addHostnameToLink(host: string, link: string) {
   if (link[0] === '/' || link[0] === '#') {
+    if (link[0] !== '/') {
+      return host + '/' + link 
+    }
+
     return host + link
+  }
+
+  if (link.indexOf('://') < 0) {
+    return host + '/' + link
   }
 
   return link

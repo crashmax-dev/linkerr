@@ -1,9 +1,8 @@
 {
   "name": "linkerr",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Simple site parser",
   "type": "module",
-  "bin": "./dist/bin.js",
   "exports": "./dist/linkerr.js",
   "types": "./dist/linkerr.d.ts",
   "files": [
@@ -11,7 +10,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "prebuild": "rimraf dist"
+    "prebuild": "rimraf dist",
+    "prepublish": "npm run build"
   },
   "author": {
     "name": "Vitalij Ryndin",
@@ -25,9 +25,6 @@
   },
   "license": "MIT",
   "keywords": [
-    "cli-app",
-    "cli",
-    "npx",
     "parse",
     "url",
     "link"
@@ -39,11 +36,9 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "chalk": "^4.1.2",
-    "commander": "^8.2.0",
+    "@sindresorhus/tsconfig": "^2.0.0",
     "got": "^11.8.2",
     "node-html-parser": "^5.0.0",
-    "ora": "^6.0.1",
     "url-parse": "^1.5.3"
   },
   "engines": {

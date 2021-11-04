@@ -1,10 +1,8 @@
 import fs from 'fs'
 import got from 'got'
 import path from 'path'
-
 import URLParse from 'url-parse'
-import { parse as parseBody } from 'node-html-parser'
-import { parseURL, addHostnameToLink, isURLAttribute, getCurrentDate } from './util.js'
+import ParseBody from './parse.js'
 
 export interface LinkerrData {
   target: string
@@ -14,63 +12,46 @@ export interface LinkerrData {
   link: string[]
 }
 
-interface LinkerrSaveData {
-  outputPath: string
-  fileName: string
-  data?: LinkerrData
-}
-
-export { getCurrentDate }
 export default class Linkerr {
-  public url: URLParse | undefined
-  public data: LinkerrData | undefined
-  public body: string | undefined
+  #parsedUrl: URLParse | null = null
+  #outputData: LinkerrData | null = null
+  #rawBody: string | null = null
 
-  async parse(url: string) {
-    const parsedUrl = parseURL(url)
+  async parse(url: string): Promise<LinkerrData> {
+    this.#parsedUrl = new URLParse(url)
 
-    if (parsedUrl.protocol) {
-      this.url = parsedUrl
-      const { body } = await got(parsedUrl.href)
-      this.body = body
-
-      this.data = {
-        target: this.url.href,
-        href: this.parseAttribute('a', 'href'),
-        img: this.parseAttribute('img', 'src'),
-        script: this.parseAttribute('script', 'src'),
-        link: this.parseAttribute('link', 'href')
+    if (this.#parsedUrl.protocol) {
+      try {
+        this.#rawBody = (await got(this.#parsedUrl.href)).body
+      } catch (err) {
+        throw err
       }
 
-      return this.data
+      const { parse } = new ParseBody(
+        this.#rawBody,
+        this.#parsedUrl
+      )
+
+      this.#outputData = {
+        target: this.#parsedUrl.href,
+        href: parse('a', 'href'),
+        img: parse('img', 'src'),
+        script: parse('script', 'src'),
+        link: parse('link', 'href')
+      }
+
+      return this.#outputData
     } else {
       throw Error('URL is not valid!')
     }
   }
 
-  private parseAttribute(selector: string, attribute: string) {
-    const body = parseBody(this.body)
-    const elements = body.querySelectorAll(selector)
-
-    return elements.reduce((acc, element) => {
-      let attributeValue = element.attributes[attribute]
-
-      if (!!attributeValue) {
-        if (isURLAttribute(attribute)) {
-          attributeValue = addHostnameToLink(this.url.origin, attributeValue)
-        }
-
-        acc.push(attributeValue)
-      }
-
-      return acc
-    }, [])
-  }
-
-  public async saveFile({ outputPath, fileName }: LinkerrSaveData) {
+  async save(
+    { outputPath, fileName }: { outputPath: string, fileName: string }
+  ): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      if (!this.data) {
-        reject('Data is not found!')
+      if (!this.#outputData) {
+        reject('Body is not found!')
       }
 
       const savePath = path.format({
@@ -82,13 +63,17 @@ export default class Linkerr {
         fs.mkdirSync(outputPath)
       }
 
-      fs.writeFile(savePath, JSON.stringify(this.data, null, 2), (err) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve()
+      fs.writeFile(
+        savePath,
+        JSON.stringify(this.#outputData, null, 2),
+        (err) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve()
+          }
         }
-      })
+      )
     })
   }
 }

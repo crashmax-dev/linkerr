@@ -13,32 +13,14 @@ npm install linkerr
 
 # Usage
 
-Use cli command:
-
-```bash
-npx linkerr -u https://example.com
-```
-
-```bash
-Usage: npx linkerr [options]
-
-Options:
-  -u, --url [url]        target url
-  -o, --output [path]    output path
-  -f, --fileName [name]  output file name
-  -h, --help             display help for command
-```
-
-Use a package:
-
 ```ts
-import Linkerr, { getCurrentDate } from 'linkerr'
+import Linkerr from 'linkerr'
 
 const linkerr = new Linkerr()
 await linkerr.parse('https://github.com')
-await linkerr.saveFile({
+await linkerr.save({
     outputPath: 'output',
-    fileName: `${linkerr.url.hostname}_${getCurrentDate()}`
+    fileName: `${linkerr.url.hostname}_${Date.now()}`
 })
 ```
 

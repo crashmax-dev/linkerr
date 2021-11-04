@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc",
     "prebuild": "rimraf dist",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "author": {
     "name": "Vitalij Ryndin",

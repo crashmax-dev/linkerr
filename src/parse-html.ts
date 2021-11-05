@@ -1,13 +1,12 @@
-import type URLParse from 'url-parse'
 import { parse as parseBody } from 'node-html-parser'
 
-export default class ParseBody {
-  #rawBody: string
-  #parsedUrl: URLParse
+export default class ParseHTML {
+  #body: string
+  #url: string
 
-  constructor(rawBody: string, parsedUrl: URLParse) {
-    this.#rawBody = rawBody
-    this.#parsedUrl = parsedUrl
+  constructor(body: string, url: string) {
+    this.#body = body
+    this.#url = url
   }
 
   #isURLAttribute(attribute: string): boolean {
@@ -31,7 +30,7 @@ export default class ParseBody {
   }
 
   parse(selector: string, attribute: string): string[] {
-    const body = parseBody(this.#rawBody)
+    const body = parseBody(this.#body)
     const elements = body.querySelectorAll(selector)
 
     return elements.reduce((acc: string[], element) => {
@@ -39,7 +38,7 @@ export default class ParseBody {
 
       if (!!attributeValue) {
         if (this.#isURLAttribute(attribute)) {
-          attributeValue = this.#addHostToLink(this.#parsedUrl.origin, attributeValue)
+          attributeValue = this.#addHostToLink(this.#url, attributeValue)
         }
 
         acc.push(attributeValue)

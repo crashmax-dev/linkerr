@@ -1,8 +1,8 @@
 import fs from 'fs'
 import got from 'got'
 import path from 'path'
-import URLParse from 'url-parse'
-import ParseBody from './parse.js'
+import ParseHTML from './parse-html.js'
+import isValidUrl from './valid-url.js'
 
 export interface LinkerrData {
   target: string
@@ -13,36 +13,47 @@ export interface LinkerrData {
 }
 
 export default class Linkerr {
-  #parsedUrl: URLParse | null = null
+  #url: URL | boolean | null = null
   #outputData: LinkerrData | null = null
-  #rawBody: string | null = null
+  #parsedBody: string | null = null
+
+  get data(): LinkerrData | null {
+    return this.#outputData
+  }
+
+  get url() {
+    return this.#url
+  }
 
   async parse(url: string): Promise<LinkerrData> {
-    this.#parsedUrl = new URLParse(url)
+    this.#url = isValidUrl(url, {
+      lenient: true
+    })
 
-    if (this.#parsedUrl.protocol) {
+    if (this.#url instanceof URL) {
       try {
-        this.#rawBody = (await got(this.#parsedUrl.href)).body
+        const { body } = await got(this.#url)
+        this.#parsedBody = body
       } catch (err) {
-        throw err
+        throw new TypeError(`${err}`)
       }
 
-      const { parse } = new ParseBody(
-        this.#rawBody,
-        this.#parsedUrl
+      const html = new ParseHTML(
+        this.#parsedBody,
+        this.#url.origin
       )
 
       this.#outputData = {
-        target: this.#parsedUrl.href,
-        href: parse('a', 'href'),
-        img: parse('img', 'src'),
-        script: parse('script', 'src'),
-        link: parse('link', 'href')
+        target: this.#url.href,
+        href: html.parse('a', 'href'),
+        img: html.parse('img', 'src'),
+        script: html.parse('script', 'src'),
+        link: html.parse('link', 'href')
       }
 
       return this.#outputData
     } else {
-      throw Error('URL is not valid!')
+      throw new TypeError('URL is not valid!')
     }
   }
 
@@ -51,7 +62,7 @@ export default class Linkerr {
   ): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this.#outputData) {
-        reject('Body is not found!')
+        throw new TypeError('Output data is not found!')
       }
 
       const savePath = path.format({

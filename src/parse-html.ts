@@ -41,7 +41,7 @@ export default class ParseHTML {
           attributeValue = this.#addHostToLink(this.#url, attributeValue)
         }
 
-        acc.push(attributeValue)
+        acc.push(decodeURI(attributeValue))
       }
 
       return acc

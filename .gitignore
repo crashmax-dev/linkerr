@@ -3,3 +3,4 @@
 /dist
 *.log
 linkerr-*.tgz
+package-lock.json

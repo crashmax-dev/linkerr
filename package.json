@@ -1,6 +1,6 @@
 {
   "name": "linkerr",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Simple site parser",
   "type": "module",
   "exports": "./dist/linkerr.js",

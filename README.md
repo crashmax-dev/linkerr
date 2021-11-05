@@ -27,7 +27,7 @@ await linkerr.save({
 ## Output example
 
 <details>
-  <summary>npx linkerr -u https://github.com</summary>
+  <summary>npx linkerr-cli -u https://github.com</summary>
 
   ```json
   {
@@ -300,3 +300,6 @@ await linkerr.save({
   }
 ```
 </details>
+
+## Related
+- [linkerr-cli](https://github.com/crashmax-dev/linkerr-cli) - CLI for this module

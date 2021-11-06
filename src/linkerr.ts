@@ -13,7 +13,7 @@ export interface LinkerrData {
 }
 
 export default class Linkerr {
-  #url: URL | boolean | null = null
+  #url: URL | null = null
   #outputData: LinkerrData | null = null
   #parsedBody: string | null = null
 
@@ -21,16 +21,18 @@ export default class Linkerr {
     return this.#outputData
   }
 
-  get url() {
+  get url(): URL | null {
     return this.#url
   }
 
   async parse(url: string): Promise<LinkerrData> {
-    this.#url = isValidUrl(url, {
+    const parsedURL = isValidUrl(url, {
       lenient: true
     })
 
-    if (this.#url instanceof URL) {
+    if (parsedURL) {
+      this.#url = parsedURL
+
       try {
         const { body } = await got(this.#url)
         this.#parsedBody = body

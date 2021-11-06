@@ -23,7 +23,7 @@ test(`save the data after receiving them from ${GITHUB_HOSTNAME}`, async (to) =>
   to.notThrows(() => fs.readFileSync(`test/${currentTime}.json`))
 })
 
-test(`trying to save data before it is received`, async (to) => {
+test('trying to save data before it is received', async (to) => {
   const currentTime = Date.now()
   const linkerr = new Linkerr()
   const fn = async () => await linkerr.save({ outputPath: 'test', fileName: `${currentTime}.json` })
@@ -31,9 +31,25 @@ test(`trying to save data before it is received`, async (to) => {
   to.is(error.message, 'Output data is not found!')
 })
 
-test(`throw invalid url`, async (to) => {
+test('throw invalid url', async (to) => {
   const linkerr = new Linkerr()
   const fn = async () => await linkerr.parse('invalid url')
   const error = await to.throwsAsync(fn(), { instanceOf: TypeError })
   to.is(error.message, 'URL is not valid!')
+})
+
+test('throw invalid filename', async (to) => {
+  const linkerr = new Linkerr()
+  await linkerr.parse(EXAMPLE_HOSTNAME)
+  const fn = async () => await linkerr.save({ outputPath: 'test', fileName: `<\/?>.json` })
+  const error = await to.throwsAsync(fn(), { instanceOf: Error })
+  to.is(error.message.indexOf('ENOENT'), 0)
+})
+
+test('throw invalid output path', async (to) => {
+  const linkerr = new Linkerr()
+  await linkerr.parse(EXAMPLE_HOSTNAME)
+  const fn = async () => await linkerr.save({ outputPath: '<\/?>', fileName: `test.json` })
+  const error = await to.throwsAsync(fn(), { instanceOf: Error })
+  to.is(error.message.indexOf('EINVAL'), 0)
 })

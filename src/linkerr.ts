@@ -64,7 +64,7 @@ export default class Linkerr {
   ): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this.#outputData) {
-        throw new TypeError('Output data is not found!')
+        reject(new TypeError('Output data is not found!'))
       }
 
       const savePath = path.format({
